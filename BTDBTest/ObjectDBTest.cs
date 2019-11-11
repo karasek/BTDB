@@ -2492,5 +2492,46 @@ namespace BTDBTest
                 Assert.False(tr.RollbackAdvised);
             }
         }
+
+        public abstract class MapBase<TKey, TItem>
+        {
+            public IOrderedDictionary<TKey, TItem> Items { get; set; }
+        }
+
+        public class PushNotificationsSettings
+        {
+            public string CertificateName { get; set; }
+            public string CertificatePass { get; set; }
+            public string Key { get; set; }
+            public string CertificateFileGuid { get; set; }
+            public Endpoint Endpoint { get; set; }
+        }
+        
+        public enum Endpoint
+        {
+            Production,
+            Developer,
+        }
+        
+        public class PushNotificationsSettingsMap : MapBase<string, PushNotificationsSettings>
+        {
+        }
+
+        [Fact]
+        public void WorksOnLinux()
+        {
+            using (var tr = _db.StartTransaction())
+            {
+                var map = tr.Singleton<PushNotificationsSettingsMap>();
+                map.Items["one"] = new PushNotificationsSettings();
+                tr.Commit();
+            }
+
+            using (var tr = _db.StartTransaction())
+            {
+                var map = tr.Singleton<PushNotificationsSettingsMap>();
+                Assert.Single(map.Items.Keys);
+            }
+        }
     }
 }
