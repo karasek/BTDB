@@ -4,7 +4,7 @@ variables:
 jobs:
   - job: "netcore_linux"
     pool:
-      vmImage: "ubuntu-latest"
+      vmImage: "ubuntu-16.04"
     steps:
       - task: UseDotNet@2
         displayName: "Use .NET Core sdk 3.0"
